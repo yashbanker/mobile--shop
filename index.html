@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Hub - Live Stock Catalog</title>
+<meta name="description" content="Browse our live stock of premium iPhones, Samsung, Google Pixel phones, Apple Watch, AirPods at best prices. Auto-updated daily.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0a0f;--bg2:#11111a;--card:#161622;--card2:#1c1c2e;--border:#2a2a3e;
+  --text:#ffffff;--muted:#9ca3af;--accent:#6366f1;--accent2:#8b5cf6;
+  --success:#10b981;--warning:#f59e0b;--whatsapp:#25d366;
+  --gradient:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#ec4899 100%);
+  --gradient2:linear-gradient(135deg,#0ea5e9 0%,#6366f1 100%);
+  --shadow-lg:0 20px 60px -15px rgba(99,102,241,.4);
+  --shadow-card:0 4px 20px rgba(0,0,0,.4);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:
+radial-gradient(at 20% 0%,rgba(99,102,241,.15) 0,transparent 50%),
+radial-gradient(at 80% 100%,rgba(236,72,153,.1) 0,transparent 50%),
+radial-gradient(at 50% 50%,rgba(139,92,246,.08) 0,transparent 50%);
+pointer-events:none;z-index:0}
+.container{max-width:1400px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);padding:14px 0}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.4rem}
+.logo-icon{width:42px;height:42px;border-radius:12px;background:var(--gradient);display:grid;place-items:center;
+  font-size:1.2rem;box-shadow:var(--shadow-lg)}
+.logo-text{background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+.header-cta{display:flex;gap:10px;align-items:center}
+.cart-btn{position:relative;background:var(--card);border:1px solid var(--border);color:var(--text);
+  padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:600;font-size:.9rem;
+  display:flex;align-items:center;gap:8px;transition:all .25s}
+.cart-btn:hover{border-color:var(--accent);transform:translateY(-2px)}
+.cart-count{background:var(--gradient);color:#fff;border-radius:999px;padding:2px 8px;font-size:.75rem;font-weight:700;min-width:22px}
+.wa-btn{background:var(--whatsapp);color:#fff;padding:10px 18px;border-radius:12px;font-weight:600;font-size:.9rem;
+  text-decoration:none;display:flex;align-items:center;gap:8px;transition:all .25s;border:none;cursor:pointer}
+.wa-btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(37,211,102,.4)}
+.refresh-btn{background:var(--card);border:1px solid var(--border);color:var(--accent);padding:10px;border-radius:12px;cursor:pointer;width:42px;height:42px;display:grid;place-items:center;transition:.25s}
+.refresh-btn:hover{transform:rotate(180deg);border-color:var(--accent)}
+.refresh-btn.spinning i{animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* HERO */
+.hero{padding:60px 0 40px;text-align:center;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);
+  padding:6px 16px;border-radius:999px;font-size:.85rem;font-weight:600;color:#6ee7b7;margin-bottom:20px}
+.hero-badge .pulse{width:8px;height:8px;background:#10b981;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.7)}50%{opacity:.6;box-shadow:0 0 0 8px rgba(16,185,129,0)}}
+.hero h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:800;line-height:1.1;margin-bottom:16px;letter-spacing:-.02em}
+.hero h1 span{background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto 30px}
+.hero-stats{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-top:30px}
+.stat{text-align:center}
+.stat-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.8rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat-label{color:var(--muted);font-size:.85rem;font-weight:500}
+.last-update{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);margin-top:14px;background:var(--card);padding:6px 14px;border-radius:999px;border:1px solid var(--border)}
+
+/* SEARCH */
+.search-section{margin:30px 0;position:sticky;top:78px;z-index:50;padding:14px 0;
+  background:rgba(10,10,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.search-bar{display:flex;gap:10px;align-items:center;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:6px 6px 6px 18px;transition:all .3s}
+.search-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px rgba(99,102,241,.15)}
+.search-bar i{color:var(--muted);font-size:1.1rem}
+.search-bar input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:1rem;padding:14px 0;font-family:inherit}
+.search-bar input::placeholder{color:var(--muted)}
+.clear-btn{background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:8px;display:none}
+.clear-btn.show{display:block}
+.filter-toggle{background:var(--gradient);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-weight:600;cursor:pointer;font-size:.9rem;display:flex;align-items:center;gap:8px;transition:all .25s}
+.filter-toggle:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+
+/* FILTERS */
+.filters{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-top:14px;display:none}
+.filters.open{display:block;animation:slideDown .3s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.filter-group label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.filter-group select,.filter-group input[type=number]{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;transition:.2s}
+.filter-group select:focus,.filter-group input:focus{border-color:var(--accent)}
+.price-range-inputs{display:flex;gap:8px}
+.price-range-inputs input{flex:1}
+.filter-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
+.btn-clear{background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:600;font-size:.85rem}
+.btn-clear:hover{border-color:#ef4444;color:#ef4444}
+
+/* CATEGORY TABS */
+.cat-tabs{display:flex;gap:10px;overflow-x:auto;padding:6px 2px;margin:20px 0;scrollbar-width:none}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{background:var(--card);border:1.5px solid var(--border);color:var(--text);padding:10px 20px;border-radius:999px;font-weight:600;font-size:.9rem;cursor:pointer;white-space:nowrap;transition:all .25s;display:flex;align-items:center;gap:8px}
+.cat-tab:hover{border-color:var(--accent)}
+.cat-tab.active{background:var(--gradient);border-color:transparent;box-shadow:var(--shadow-lg)}
+.cat-tab .count{background:rgba(0,0,0,.25);padding:2px 8px;border-radius:999px;font-size:.75rem}
+.cat-tab.active .count{background:rgba(255,255,255,.25)}
+
+/* RESULTS BAR */
+.results-bar{display:flex;justify-content:space-between;align-items:center;margin:14px 0;flex-wrap:wrap;gap:10px}
+.result-count{color:var(--muted);font-size:.9rem}
+.result-count b{color:var(--text)}
+.sort-select{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;font-size:.85rem;font-family:inherit;cursor:pointer;outline:none}
+
+/* PRODUCT GRID */
+.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;padding:10px 0 60px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;display:flex;flex-direction:column;cursor:pointer}
+.card:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 25px 50px -12px rgba(99,102,241,.35)}
+.card-img{height:220px;background:linear-gradient(135deg,#fff,#f3f4f6);position:relative;overflow:hidden;display:grid;place-items:center;padding:14px}
+.card-img img{max-width:90%;max-height:100%;object-fit:contain;transition:transform .4s ease;filter:drop-shadow(0 10px 20px rgba(0,0,0,.15))}
+.card:hover .card-img img{transform:scale(1.08)}
+.card-img .fallback{font-size:4rem;background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+.card-badge{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);color:#fff;padding:5px 10px;border-radius:8px;font-size:.7rem;font-weight:700;letter-spacing:.5px;z-index:2;text-transform:uppercase}
+.card-badge.new{background:linear-gradient(135deg,#10b981,#059669)}
+.card-fav{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border:none;color:#374151;width:36px;height:36px;border-radius:50%;cursor:pointer;display:grid;place-items:center;z-index:2;transition:.2s;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.card-fav:hover{background:#ef4444;color:#fff}
+.card-fav.active{background:#ef4444;color:#fff}
+.card-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:8px}
+.card-brand{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase}
+.card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.1rem;font-weight:700;line-height:1.3;color:#fff}
+.card-specs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.spec-chip{background:var(--bg2);border:1px solid var(--border);padding:4px 10px;border-radius:8px;font-size:.72rem;color:#cbd5e1;font-weight:500;display:flex;align-items:center;gap:5px}
+.spec-chip i{font-size:.7rem;color:var(--accent)}
+.card-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;padding-top:12px;border-top:1px dashed var(--border)}
+.meta-item{font-size:.75rem;color:var(--muted)}
+.meta-item b{display:block;color:var(--text);font-size:.85rem;font-weight:600;margin-top:2px}
+.card-footer{padding:14px 18px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--border)}
+.price{display:flex;flex-direction:column}
+.price-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.price-amount{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.35rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn-buy{background:var(--whatsapp);color:#fff;border:none;padding:10px 14px;border-radius:10px;font-weight:600;font-size:.85rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.25s;text-decoration:none}
+.btn-buy:hover{background:#1ea854;transform:scale(1.05)}
+
+/* LOADER */
+.loader{text-align:center;padding:60px 20px}
+.spinner{width:50px;height:50px;border:4px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+.loader p{color:var(--muted)}
+
+/* EMPTY/ERROR STATE */
+.empty{text-align:center;padding:80px 20px;color:var(--muted)}
+.empty i{font-size:4rem;color:var(--border);margin-bottom:20px}
+.empty h3{color:var(--text);font-size:1.4rem;margin-bottom:8px}
+.error-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5;padding:20px;border-radius:14px;margin:20px 0;text-align:center}
+.error-box i{font-size:2rem;margin-bottom:10px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;animation:slideUp .35s}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card);z-index:1}
+.modal-header h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem}
+.modal-close{background:var(--bg2);border:none;color:#fff;width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:1rem}
+.modal-close:hover{background:#ef4444}
+.modal-body{padding:24px}
+.modal-img{height:280px;background:linear-gradient(135deg,#fff,#f3f4f6);border-radius:14px;display:grid;place-items:center;margin-bottom:20px;position:relative;overflow:hidden;padding:20px}
+.modal-img img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 15px 30px rgba(0,0,0,.2))}
+.modal-img .fallback{font-size:6rem;background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+.modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:6px}
+.modal-brand{font-size:.85rem;color:var(--accent);font-weight:600;letter-spacing:1.5px;text-transform:uppercase}
+.modal-price{font-family:'Plus Jakarta Sans',sans-serif;font-size:2rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent;margin:14px 0}
+.modal-specs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+.modal-spec{background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:12px}
+.modal-spec-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.modal-spec-value{font-weight:600;color:#fff}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-primary{background:var(--whatsapp);color:#fff;border:none;padding:14px;border-radius:12px;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:.2s}
+.btn-primary:hover{background:#1ea854}
+.btn-secondary{background:var(--bg2);border:1px solid var(--border);color:#fff;padding:14px;border-radius:12px;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s}
+.btn-secondary:hover{border-color:var(--accent)}
+
+/* FLOATING WHATSAPP */
+.float-wa{position:fixed;bottom:25px;right:25px;width:60px;height:60px;background:var(--whatsapp);border-radius:50%;display:grid;place-items:center;color:#fff;font-size:1.7rem;box-shadow:0 10px 30px rgba(37,211,102,.5);z-index:90;text-decoration:none;animation:bounce 2s infinite;transition:.25s}
+.float-wa:hover{transform:scale(1.1)}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* FOOTER */
+footer{background:var(--card);border-top:1px solid var(--border);padding:40px 0 20px;margin-top:60px;text-align:center}
+footer p{color:var(--muted);font-size:.9rem;margin:6px 0}
+footer .brand{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
+.footer-links{display:flex;justify-content:center;gap:18px;margin:14px 0;flex-wrap:wrap}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:.85rem;transition:.2s}
+.footer-links a:hover{color:var(--accent)}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid var(--success);color:#fff;padding:14px 22px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:300;font-weight:600;display:flex;align-items:center;gap:10px;transition:.4s;opacity:0}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast i{color:var(--success);font-size:1.2rem}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .hero{padding:40px 0 20px}
+  .hero-stats{gap:18px}
+  .products{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+  .card-img{height:160px;padding:10px}
+  .card-body{padding:12px;gap:6px}
+  .card-title{font-size:.92rem}
+  .card-footer{padding:10px 12px 12px;flex-direction:column;align-items:stretch}
+  .price-amount{font-size:1.1rem}
+  .btn-buy{justify-content:center;padding:8px}
+  .spec-chip{font-size:.65rem;padding:3px 7px}
+  .card-meta{display:none}
+  .header-cta .wa-btn span{display:none}
+  .modal-actions{grid-template-columns:1fr}
+  .float-wa{width:54px;height:54px;font-size:1.5rem;bottom:18px;right:18px}
+  .modal-img{height:220px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container header-inner">
+    <div class="logo">
+      <div class="logo-icon"><i class="fas fa-mobile-screen-button"></i></div>
+      <div class="logo-text" id="brandName">Mobile Hub</div>
+    </div>
+    <div class="header-cta">
+      <button class="refresh-btn" id="refreshBtn" onclick="loadStock(true)" title="Refresh stock"><i class="fas fa-rotate"></i></button>
+      <button class="cart-btn" onclick="openCart()">
+        <i class="fas fa-heart"></i>
+        <span>Wishlist</span>
+        <span class="cart-count" id="favCount">0</span>
+      </button>
+      <a class="wa-btn" id="headerWa" href="#" target="_blank">
+        <i class="fab fa-whatsapp"></i><span>Chat with us</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero container">
+  <div class="hero-badge"><span class="pulse"></span> Live Stock — Auto-updated from our system</div>
+  <h1>Premium <span>Smartphones</span> &<br>Apple Accessories</h1>
+  <p>Genuine, tested & warranty-backed phones with transparent pricing. Browse our live stock and order on WhatsApp.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">Phones in Stock</div></div>
+    <div class="stat"><div class="stat-num" id="brandCount">0</div><div class="stat-label">Top Brands</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Genuine</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">WhatsApp Support</div></div>
+  </div>
+  <div class="last-update" id="lastUpdate"><i class="fas fa-clock"></i> <span>Loading...</span></div>
+</section>
+
+<!-- SEARCH & FILTERS -->
+<div class="search-section">
+  <div class="container">
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search by brand, model, color, storage... (e.g. iPhone 15 Pro Blue 256)">
+      <button class="clear-btn" id="clearBtn" onclick="clearSearch()"><i class="fas fa-times-circle"></i></button>
+      <button class="filter-toggle" onclick="toggleFilters()">
+        <i class="fas fa-sliders"></i> <span>Filters</span>
+      </button>
+    </div>
+    <div class="filters" id="filtersPanel">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>Brand</label>
+          <select id="filterBrand"><option value="">All Brands</option></select>
+        </div>
+        <div class="filter-group">
+          <label>Color</label>
+          <select id="filterColour"><option value="">All Colors</option></select>
+        </div>
+        <div class="filter-group">
+          <label>Storage</label>
+          <select id="filterStorage"><option value="">All Storage</option></select>
+        </div>
+        <div class="filter-group">
+          <label>Price Range (₹)</label>
+          <div class="price-range-inputs">
+            <input type="number" id="minPrice" placeholder="Min" min="0">
+            <input type="number" id="maxPrice" placeholder="Max" min="0">
+          </div>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button class="btn-clear" onclick="resetFilters()"><i class="fas fa-rotate-left"></i> Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="container">
+  <div class="cat-tabs" id="catTabs"></div>
+
+  <div class="results-bar">
+    <div class="result-count">Showing <b id="showingCount">0</b> products</div>
+    <select class="sort-select" id="sortSelect">
+      <option value="default">Sort: Featured</option>
+      <option value="low">Price: Low to High</option>
+      <option value="high">Price: High to Low</option>
+      <option value="model">Model A-Z</option>
+    </select>
+  </div>
+
+  <div class="products" id="productsGrid">
+    <div class="loader" style="grid-column:1/-1">
+      <div class="spinner"></div>
+      <p>Loading latest stock...</p>
+    </div>
+  </div>
+</main>
+
+<a class="float-wa" id="floatWa" href="#" target="_blank" title="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg">Added</span></div>
+
+<footer>
+  <div class="container">
+    <div class="brand" id="footerBrand">Mobile Hub</div>
+    <p id="footerTagline">Premium Phones at Best Prices</p>
+    <p><i class="fas fa-location-dot"></i> <span id="footerLocation">Your City, India</span></p>
+    <div class="footer-links">
+      <a id="footerWa" href="#" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+      <a id="footerCall" href="#"><i class="fas fa-phone"></i> Call</a>
+      <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false"><i class="fas fa-arrow-up"></i> Back to top</a>
+    </div>
+    <p style="margin-top:18px;font-size:.8rem">© 2026 <span id="copyrightBrand">Mobile Hub</span>. All prices in INR. Stock subject to availability.</p>
+  </div>
+</footer>
+
+<script>
+/* ==================================================================
+   ⚙️ CONFIGURATION — EDIT THESE 4 LINES
+   ================================================================== */
+const CONFIG = {
+  SHOP_NAME:    "Mobile Hub",                       // 🏪 Your shop name
+  SHOP_TAGLINE: "Premium Phones at Best Prices",    // 📝 Tagline
+  SHOP_PHONE:   "919999999999",                     // 📱 WhatsApp number with country code, no +
+  SHOP_LOCATION:"Your City, India",                 // 📍 Shop location
+  
+  // 🔗 PASTE YOUR PUBLISHED GOOGLE SHEET CSV URL HERE
+  // Steps to get this URL:
+  //  1. Open your Google Sheet → File → Share → Publish to web
+  //  2. Choose "STOCK" sheet, format CSV → Click Publish
+  //  3. Copy the link that ends with /pub?output=csv and paste below
+  GOOGLE_SHEET_CSV_URL: "",
+  
+  // ⏱️ Auto-refresh stock every X minutes (0 = disabled)
+  AUTO_REFRESH_MINUTES: 10
+};
+/* ================================================================== */
+
+/* ============= REAL PHONE IMAGE LIBRARY (auto-matches by model name) ============= */
+const PHONE_IMAGES = {
+  // iPhone 17 series
+  "iphone 17 pro max": "https://sspark.genspark.ai/cfimages?u1=TUj6UmxVugSRo0zTNls7Hd341kEE53wwllx4SRblljySj1RGiv%2Bf%2BEl0lkMcXG08M2ZWVd2fVD93p0tWAqNSM041yEauxbOITMzFEHshrM78vBeBkCiiZ7rKNVqW3UBf4%2BrFDJ4M6hNbb64g1lGzsH1Fkkgh6p4WuzddMxmqTf0xgfztHEMuslJbaTrwK%2Fr%2BzMOZEnLAmOgYQioIQ2m7OxDs1qJBNv8%2F15jC9pCdV8ApXSj%2F&u2=iM55A4ghhneVUBnA&width=2560",
+  "iphone 17 pro": "https://sspark.genspark.ai/cfimages?u1=rVeZ%2FTP2c29iPH23hbln1ebsh5f6U7hN3YvU%2FtoYC2pNagc3lYi%2FjTB8PuQynNzD4%2BZARAqjhM2OO1vzJ7mrlfXWHaYJhaFvIccutm8fjRY6rWCcg5fYndCrBrjb5%2FYePfds2k1I7bkg4OtmD9Bv%2BRM4crjXNA%3D%3D&u2=W0%2BEjqeRdAz4yq3S&width=2560",
+  "iphone 17": "https://sspark.genspark.ai/cfimages?u1=2LecCaDHqyINnU3dtU3KNHmAyYSF0QA%2F7ejAxdWRUeiAkimQxgfgLKbvQLfP6KTU4T%2BcNYLlhuFdHdiNr3O7mIHM9P9hAoju5NNJi70FHgoC9vNlqg5waZfRVKNmsacONvgzH6C9MqWgcpDx73jnKfEtntw%3D&u2=X26UehiU5XZ4T2Ay&width=2560",
+  "iphone air": "https://sspark.genspark.ai/cfimages?u1=%2Fja617bCGX4WdM%2FF%2BuHlOrj7U3EUNcG5yydlBrs%2BQKOmQ8ROyFrjoPKY2FDHTBNDAkXatyBZJsbEuBJ0lAKIn41PCxigR%2BaiDbwycYfmJr4JebtD6qJCf15oTSmC5nJm9zM2r778ntZMRJkgA4hB8nqCHcFTlRXqqenl6Y2E5%2FkwhpqP03VRrmWJ%2BMvziQLNFUMM44CgsIg8nd72Hw1DHcBN3ynZJiMABEuIFQjZpENtbz%2BSiLfBV1%2Bhl00%2F%2FCkLxt9PaQ%3D%3D&u2=OlVgv%2BPC9D0bLDYC&width=2560",
+  // iPhone 16 series
+  "iphone 16 pro max": "https://sspark.genspark.ai/cfimages?u1=lFmCNoz5rQI2Je0INxA%2FL6iJof6h5VUcAHCz8Qjg6532dg6RhTZG6IHXTfynYA70M4BhowFW3Z9oaxkfaHgV2ksA8Q%3D%3D&u2=oAIfl5nA7HPsS2gl&width=2560",
+  "iphone 16 pro": "https://sspark.genspark.ai/cfimages?u1=A9%2FX6Hic518qVhcD797NL3u7pH7%2B501TC%2FpovZeUzooD6b7jhmwztky3gyfnmIVW3Sqq%2BxfgrDVDBdGZ1AhsA9RBRj3fnJjOIi%2Fa71XkI%2FkIm1CUnh7NGg%2BT04xyt5lx9hM84SSF&u2=daa0LbvZh9qhkqwr&width=2560",
+  "iphone 16 plus": "https://sspark.genspark.ai/cfimages?u1=A9%2FX6Hic518qVhcD797NL3u7pH7%2B501TC%2FpovZeUzooD6b7jhmwztky3gyfnmIVW3Sqq%2BxfgrDVDBdGZ1AhsA9RBRj3fnJjOIi%2Fa71XkI%2FkIm1CUnh7NGg%2BT04xyt5lx9hM84SSF&u2=daa0LbvZh9qhkqwr&width=2560",
+  "iphone 16": "https://sspark.genspark.ai/cfimages?u1=A9%2FX6Hic518qVhcD797NL3u7pH7%2B501TC%2FpovZeUzooD6b7jhmwztky3gyfnmIVW3Sqq%2BxfgrDVDBdGZ1AhsA9RBRj3fnJjOIi%2Fa71XkI%2FkIm1CUnh7NGg%2BT04xyt5lx9hM84SSF&u2=daa0LbvZh9qhkqwr&width=2560",
+  // iPhone 15 series
+  "iphone 15 pro max": "https://sspark.genspark.ai/cfimages?u1=w9ZAOvgbfWFrpkKx1xD0chKtI1YeCQKXeLMXeB5y8voiAKEVbdXJB5DBskwLJzlZEEswPlSqSE%2F%2Fg%2BmZaiCBB5wiYw%3D%3D&u2=Uk%2BslAeC4gLNUz7R&width=2560",
+  "iphone 15 pro": "https://sspark.genspark.ai/cfimages?u1=w9ZAOvgbfWFrpkKx1xD0chKtI1YeCQKXeLMXeB5y8voiAKEVbdXJB5DBskwLJzlZEEswPlSqSE%2F%2Fg%2BmZaiCBB5wiYw%3D%3D&u2=Uk%2BslAeC4gLNUz7R&width=2560",
+  "iphone 15 plus": "https://sspark.genspark.ai/cfimages?u1=wSIeuKR1vyVmTTnNOFxRw2TaEGXNd5QhaihYaFyT6kl4ogBSRdhQGZ2EqR%2FsK5rw7l6m9GU%2BbV%2FarP4i0pxkXy4bSw%3D%3D&u2=Der%2FnqTTSyL9r1JU&width=2560",
+  "iphone 15": "https://sspark.genspark.ai/cfimages?u1=wSIeuKR1vyVmTTnNOFxRw2TaEGXNd5QhaihYaFyT6kl4ogBSRdhQGZ2EqR%2FsK5rw7l6m9GU%2BbV%2FarP4i0pxkXy4bSw%3D%3D&u2=Der%2FnqTTSyL9r1JU&width=2560",
+  // iPhone 14 series
+  "iphone 14 pro max": "https://sspark.genspark.ai/cfimages?u1=Q%2FTsqxuunNv17Y4MFEvaPKoeVOjVTb9oqJu5sLCQmRpMObNaWGrWRi%2BIi6hSJI5K%2BwMUKHR7B8glKVL6H%2BbFjhdzMT7XHuIDMjZxHYEyKpDKTflQsS6ZuA%3D%3D&u2=%2Fjy9XVs5kYbubicH&width=2560",
+  "iphone 14 pro": "https://sspark.genspark.ai/cfimages?u1=Q%2FTsqxuunNv17Y4MFEvaPKoeVOjVTb9oqJu5sLCQmRpMObNaWGrWRi%2BIi6hSJI5K%2BwMUKHR7B8glKVL6H%2BbFjhdzMT7XHuIDMjZxHYEyKpDKTflQsS6ZuA%3D%3D&u2=%2Fjy9XVs5kYbubicH&width=2560",
+  "iphone 14 plus": "https://sspark.genspark.ai/cfimages?u1=Q%2FTsqxuunNv17Y4MFEvaPKoeVOjVTb9oqJu5sLCQmRpMObNaWGrWRi%2BIi6hSJI5K%2BwMUKHR7B8glKVL6H%2BbFjhdzMT7XHuIDMjZxHYEyKpDKTflQsS6ZuA%3D%3D&u2=%2Fjy9XVs5kYbubicH&width=2560",
+  "iphone 14": "https://sspark.genspark.ai/cfimages?u1=Q%2FTsqxuunNv17Y4MFEvaPKoeVOjVTb9oqJu5sLCQmRpMObNaWGrWRi%2BIi6hSJI5K%2BwMUKHR7B8glKVL6H%2BbFjhdzMT7XHuIDMjZxHYEyKpDKTflQsS6ZuA%3D%3D&u2=%2Fjy9XVs5kYbubicH&width=2560",
+  // iPhone 13 series
+  "iphone 13 pro max": "https://sspark.genspark.ai/cfimages?u1=yROjsyBgACHo%2B8wFhfL1inxqMy6F%2Bka8FdSh5IjhLG498NsEoHoIJBuaLWtk7jimhrJaiQevHMs9ErreLXlaZJL%2FQw%3D%3D&u2=CCHb26hiib0q%2FFmK&width=2560",
+  "iphone 13 pro": "https://sspark.genspark.ai/cfimages?u1=yROjsyBgACHo%2B8wFhfL1inxqMy6F%2Bka8FdSh5IjhLG498NsEoHoIJBuaLWtk7jimhrJaiQevHMs9ErreLXlaZJL%2FQw%3D%3D&u2=CCHb26hiib0q%2FFmK&width=2560",
+  "iphone 13 mini": "https://sspark.genspark.ai/cfimages?u1=T0okBY3vh1V1mMUVNYPZkQHVxlUwzyYhyvVRc5b828nZ7HnzNP%2F2%2BKMqYHDXI74SHYicpGBSuHoPEucdCQTDz2WjxQ%3D%3D&u2=E%2FnzEFg0KvkDgwnW&width=2560",
+  "iphone 13": "https://sspark.genspark.ai/cfimages?u1=T0okBY3vh1V1mMUVNYPZkQHVxlUwzyYhyvVRc5b828nZ7HnzNP%2F2%2BKMqYHDXI74SHYicpGBSuHoPEucdCQTDz2WjxQ%3D%3D&u2=E%2FnzEFg0KvkDgwnW&width=2560",
+  // iPhone 12
+  "iphone 12 pro max": "https://sspark.genspark.ai/cfimages?u1=T0okBY3vh1V1mMUVNYPZkQHVxlUwzyYhyvVRc5b828nZ7HnzNP%2F2%2BKMqYHDXI74SHYicpGBSuHoPEucdCQTDz2WjxQ%3D%3D&u2=E%2FnzEFg0KvkDgwnW&width=2560",
+  "iphone 12 pro": "https://sspark.genspark.ai/cfimages?u1=T0okBY3vh1V1mMUVNYPZkQHVxlUwzyYhyvVRc5b828nZ7HnzNP%2F2%2BKMqYHDXI74SHYicpGBSuHoPEucdCQTDz2WjxQ%3D%3D&u2=E%2FnzEFg0KvkDgwnW&width=2560",
+  "iphone 12": "https://sspark.genspark.ai/cfimages?u1=T0okBY3vh1V1mMUVNYPZkQHVxlUwzyYhyvVRc5b828nZ7HnzNP%2F2%2BKMqYHDXI74SHYicpGBSuHoPEucdCQTDz2WjxQ%3D%3D&u2=E%2FnzEFg0KvkDgwnW&width=2560",
+  // Samsung
+  "fold 7": "https://sspark.genspark.ai/cfimages?u1=V8r0TEI5BJPwUwWgykPa07GFuDuLk3x9AcPVKtqtZNVbf365ErDPiVY5OJdMmOXSuVTa%2BhHiXjRWHBdOvk5Rat%2BlDQ%3D%3D&u2=rhkBHYgc%2BH9WeDxn&width=2560",
+  "fold 6": "https://sspark.genspark.ai/cfimages?u1=V8r0TEI5BJPwUwWgykPa07GFuDuLk3x9AcPVKtqtZNVbf365ErDPiVY5OJdMmOXSuVTa%2BhHiXjRWHBdOvk5Rat%2BlDQ%3D%3D&u2=rhkBHYgc%2BH9WeDxn&width=2560",
+  "fold 5": "https://sspark.genspark.ai/cfimages?u1=V8r0TEI5BJPwUwWgykPa07GFuDuLk3x9AcPVKtqtZNVbf365ErDPiVY5OJdMmOXSuVTa%2BhHiXjRWHBdOvk5Rat%2BlDQ%3D%3D&u2=rhkBHYgc%2BH9WeDxn&width=2560",
+  "flip 6": "https://sspark.genspark.ai/cfimages?u1=kskKznACKzFX6o6vsT%2BQ2XYTTRtm1Uw30Spu%2FuZZWk5jBveHJwVth42REH5Ktv500uYOPo8Q4aI8SBwcVMsjDMMjwQ%3D%3D&u2=ETs4wJf1djKJoYGS&width=2560",
+  "flip 5": "https://sspark.genspark.ai/cfimages?u1=kskKznACKzFX6o6vsT%2BQ2XYTTRtm1Uw30Spu%2FuZZWk5jBveHJwVth42REH5Ktv500uYOPo8Q4aI8SBwcVMsjDMMjwQ%3D%3D&u2=ETs4wJf1djKJoYGS&width=2560",
+  "s25 ultra": "https://sspark.genspark.ai/cfimages?u1=A%2FElD4%2B%2Fz7wa1KzPxrc%2BXvdKv5jyP36DL3zTIUiBbPfqT2hsD6VcFvRsZ%2FX8u5Xxko1lNIkeBcK7%2BJqLbRdQGJ1v%2BTmGSbOOZ4sx2advV6bIivPfkb%2Fa8gCh9%2F2W9c7NjkoKYQo%2FIX6bFq0T&u2=2HaykVemtTxp%2BRcj&width=2560",
+  "s25": "https://sspark.genspark.ai/cfimages?u1=A%2FElD4%2B%2Fz7wa1KzPxrc%2BXvdKv5jyP36DL3zTIUiBbPfqT2hsD6VcFvRsZ%2FX8u5Xxko1lNIkeBcK7%2BJqLbRdQGJ1v%2BTmGSbOOZ4sx2advV6bIivPfkb%2Fa8gCh9%2F2W9c7NjkoKYQo%2FIX6bFq0T&u2=2HaykVemtTxp%2BRcj&width=2560",
+  "s24 ultra": "https://sspark.genspark.ai/cfimages?u1=QGcUEpIfvslNJ%2FVRSqTxZGow%2BmxC3HjQO%2Ftwuzb7fs76V73419Et6S7m2fd1HsxA4aY6YqaVXPhzAJ40F1wVUaoV5W%2BCcA9yG5JecLIjse57GaWKfsLqSw%3D%3D&u2=cR87g711IefpEeTL&width=2560",
+  "s24": "https://sspark.genspark.ai/cfimages?u1=QGcUEpIfvslNJ%2FVRSqTxZGow%2BmxC3HjQO%2Ftwuzb7fs76V73419Et6S7m2fd1HsxA4aY6YqaVXPhzAJ40F1wVUaoV5W%2BCcA9yG5JecLIjse57GaWKfsLqSw%3D%3D&u2=cR87g711IefpEeTL&width=2560",
+  "s23 fe": "https://sspark.genspark.ai/cfimages?u1=QGcUEpIfvslNJ%2FVRSqTxZGow%2BmxC3HjQO%2Ftwuzb7fs76V73419Et6S7m2fd1HsxA4aY6YqaVXPhzAJ40F1wVUaoV5W%2BCcA9yG5JecLIjse57GaWKfsLqSw%3D%3D&u2=cR87g711IefpEeTL&width=2560",
+  "s23": "https://sspark.genspark.ai/cfimages?u1=QGcUEpIfvslNJ%2FVRSqTxZGow%2BmxC3HjQO%2Ftwuzb7fs76V73419Et6S7m2fd1HsxA4aY6YqaVXPhzAJ40F1wVUaoV5W%2BCcA9yG5JecLIjse57GaWKfsLqSw%3D%3D&u2=cR87g711IefpEeTL&width=2560",
+  "s22 plus": "https://sspark.genspark.ai/cfimages?u1=QGcUEpIfvslNJ%2FVRSqTxZGow%2BmxC3HjQO%2Ftwuzb7fs76V73419Et6S7m2fd1HsxA4aY6YqaVXPhzAJ40F1wVUaoV5W%2BCcA9yG5JecLIjse57GaWKfsLqSw%3D%3D&u2=cR87g711IefpEeTL&width=2560",
+  "s22": "https://sspark.genspark.ai/cfimages?u1=QGcUEpIfvslNJ%2FVRSqTxZGow%2BmxC3HjQO%2Ftwuzb7fs76V73419Et6S7m2fd1HsxA4aY6YqaVXPhzAJ40F1wVUaoV5W%2BCcA9yG5JecLIjse57GaWKfsLqSw%3D%3D&u2=cR87g711IefpEeTL&width=2560",
+  "s21 fe": "https://sspark.genspark.ai/cfimages?u1=QGcUEpIfvslNJ%2FVRSqTxZGow%2BmxC3HjQO%2Ftwuzb7fs76V73419Et6S7m2fd1HsxA4aY6YqaVXPhzAJ40F1wVUaoV5W%2BCcA9yG5JecLIjse57GaWKfsLqSw%3D%3D&u2=cR87g711IefpEeTL&width=2560",
+  "note 20": "https://sspark.genspark.ai/cfimages?u1=QGcUEpIfvslNJ%2FVRSqTxZGow%2BmxC3HjQO%2Ftwuzb7fs76V73419Et6S7m2fd1HsxA4aY6YqaVXPhzAJ40F1wVUaoV5W%2BCcA9yG5JecLIjse57GaWKfsLqSw%3D%3D&u2=cR87g711IefpEeTL&width=2560",
+  // Pixel
+  "pixel 10 pro fold": "https://sspark.genspark.ai/cfimages?u1=CUqaKJN3p2Z0QYc6qKnUl%2BfZ%2FIarMvQmXBnR%2B5PhuOSNVcEfoigLGAumhSKTMxLB52UNEM1gGUEgAOSVM0cfLLVbzw%3D%3D&u2=tM6dTDiJ3MIA%2B1TS&width=2560",
+  "pixel 10 pro": "https://sspark.genspark.ai/cfimages?u1=lm1dcQrwvZlfVoYlumhp2qwvViusLw93h%2F2CN7%2FMqRevrfbEJf57C1SngsCiemNPJ9I4vszwblWzuZs0z8HbZdDgBu43SO6dgyB5hrQMCf%2FjUabNGHJslgkMcOsibnPSdpGxDgd%2FR8Zriaofwop95RA6HY0DGvD9md8Mt1M1T2%2BejlY%3D&u2=fIhFhPA%2BI4eks7MI&width=2560",
+  "pixel 10": "https://sspark.genspark.ai/cfimages?u1=lm1dcQrwvZlfVoYlumhp2qwvViusLw93h%2F2CN7%2FMqRevrfbEJf57C1SngsCiemNPJ9I4vszwblWzuZs0z8HbZdDgBu43SO6dgyB5hrQMCf%2FjUabNGHJslgkMcOsibnPSdpGxDgd%2FR8Zriaofwop95RA6HY0DGvD9md8Mt1M1T2%2BejlY%3D&u2=fIhFhPA%2BI4eks7MI&width=2560",
+  "pixel 9 pro": "https://sspark.genspark.ai/cfimages?u1=tr%2FX9vUBuVggTAFaZItZ9SYEuaS8%2BNGZzTKx9NyRcOeJX%2B4PjwilLyR182wgAMCnikgwwOEktTjrc8steKeY5e%2Brz1SSNP3X5%2FOIdzpI9FHbYB1lVKoW3SS6pqsOf3Bf7jl143UnkTg%3D&u2=Fj98TF9mYYVNLz%2BK&width=2560",
+  "pixel 9": "https://sspark.genspark.ai/cfimages?u1=tr%2FX9vUBuVggTAFaZItZ9SYEuaS8%2BNGZzTKx9NyRcOeJX%2B4PjwilLyR182wgAMCnikgwwOEktTjrc8steKeY5e%2Brz1SSNP3X5%2FOIdzpI9FHbYB1lVKoW3SS6pqsOf3Bf7jl143UnkTg%3D&u2=Fj98TF9mYYVNLz%2BK&width=2560",
+  "pixel 8": "https://sspark.genspark.ai/cfimages?u1=tr%2FX9vUBuVggTAFaZItZ9SYEuaS8%2BNGZzTKx9NyRcOeJX%2B4PjwilLyR182wgAMCnikgwwOEktTjrc8steKeY5e%2Brz1SSNP3X5%2FOIdzpI9FHbYB1lVKoW3SS6pqsOf3Bf7jl143UnkTg%3D&u2=Fj98TF9mYYVNLz%2BK&width=2560",
+  "pixel 6 pro": "https://sspark.genspark.ai/cfimages?u1=tr%2FX9vUBuVggTAFaZItZ9SYEuaS8%2BNGZzTKx9NyRcOeJX%2B4PjwilLyR182wgAMCnikgwwOEktTjrc8steKeY5e%2Brz1SSNP3X5%2FOIdzpI9FHbYB1lVKoW3SS6pqsOf3Bf7jl143UnkTg%3D&u2=Fj98TF9mYYVNLz%2BK&width=2560",
+  "pixel 6a": "https://sspark.genspark.ai/cfimages?u1=tr%2FX9vUBuVggTAFaZItZ9SYEuaS8%2BNGZzTKx9NyRcOeJX%2B4PjwilLyR182wgAMCnikgwwOEktTjrc8steKeY5e%2Brz1SSNP3X5%2FOIdzpI9FHbYB1lVKoW3SS6pqsOf3Bf7jl143UnkTg%3D&u2=Fj98TF9mYYVNLz%2BK&width=2560",
+  // Apple Watch / AirPods
+  "iwatch ultra 2": "https://sspark.genspark.ai/cfimages?u1=JQb4PHYzcieZi89VzC32Ao7mWilZFxzYIAYVkXMKx%2FGFwqTpo2kGQnuhvi4Bp49xy%2FoMtTD10DJlTteJ00ze5O8lC9pRZ%2FQuWgeDRPRI1rcyc2Uis8180V1nRV98lfAUk46zD80kLtApXN5ozWnIZfb5EjGCzRhWecsWd4Wt4kqMhHQzfgLt6Um7cPLNVkBGru19pRMhDku%2BRGHQJPNk5sZd1UF6AH0ON6Ecbsg%3D&u2=6H%2FbIuBFBgZhA3MD&width=2560",
+  "iwatch ultra": "https://sspark.genspark.ai/cfimages?u1=JQb4PHYzcieZi89VzC32Ao7mWilZFxzYIAYVkXMKx%2FGFwqTpo2kGQnuhvi4Bp49xy%2FoMtTD10DJlTteJ00ze5O8lC9pRZ%2FQuWgeDRPRI1rcyc2Uis8180V1nRV98lfAUk46zD80kLtApXN5ozWnIZfb5EjGCzRhWecsWd4Wt4kqMhHQzfgLt6Um7cPLNVkBGru19pRMhDku%2BRGHQJPNk5sZd1UF6AH0ON6Ecbsg%3D&u2=6H%2FbIuBFBgZhA3MD&width=2560",
+  "iwatch s5": "https://sspark.genspark.ai/cfimages?u1=JQb4PHYzcieZi89VzC32Ao7mWilZFxzYIAYVkXMKx%2FGFwqTpo2kGQnuhvi4Bp49xy%2FoMtTD10DJlTteJ00ze5O8lC9pRZ%2FQuWgeDRPRI1rcyc2Uis8180V1nRV98lfAUk46zD80kLtApXN5ozWnIZfb5EjGCzRhWecsWd4Wt4kqMhHQzfgLt6Um7cPLNVkBGru19pRMhDku%2BRGHQJPNk5sZd1UF6AH0ON6Ecbsg%3D&u2=6H%2FbIuBFBgZhA3MD&width=2560",
+  "iwatch s4": "https://sspark.genspark.ai/cfimages?u1=JQb4PHYzcieZi89VzC32Ao7mWilZFxzYIAYVkXMKx%2FGFwqTpo2kGQnuhvi4Bp49xy%2FoMtTD10DJlTteJ00ze5O8lC9pRZ%2FQuWgeDRPRI1rcyc2Uis8180V1nRV98lfAUk46zD80kLtApXN5ozWnIZfb5EjGCzRhWecsWd4Wt4kqMhHQzfgLt6Um7cPLNVkBGru19pRMhDku%2BRGHQJPNk5sZd1UF6AH0ON6Ecbsg%3D&u2=6H%2FbIuBFBgZhA3MD&width=2560",
+  "airpods pro 3": "https://sspark.genspark.ai/cfimages?u1=vMuYuAIXrzgcZx9SMrO0DAR%2BvcwfOTSYjvble%2B%2BOMm0z%2BoorQjA1%2FHBIl6mJpwjH8LSI%2Bg2pjggUiReXygR1R2QdNqIf3PMO7tQijTNPJNfUeBUYhon2S87qUZXzANzCRmWbIc3kKoQLujqXF0PRHtwtIMSh4vdRnVIh&u2=Udrq4BNFF3E89Sv5&width=2560",
+  "airpods": "https://sspark.genspark.ai/cfimages?u1=vMuYuAIXrzgcZx9SMrO0DAR%2BvcwfOTSYjvble%2B%2BOMm0z%2BoorQjA1%2FHBIl6mJpwjH8LSI%2Bg2pjggUiReXygR1R2QdNqIf3PMO7tQijTNPJNfUeBUYhon2S87qUZXzANzCRmWbIc3kKoQLujqXF0PRHtwtIMSh4vdRnVIh&u2=Udrq4BNFF3E89Sv5&width=2560"
+};
+
+function findImage(model, brand){
+  if(!model) return null;
+  // Normalize model: keep only words/spaces/digits. e.g. "17PRO MAX SIM+ESIM" -> "17pro max sim esim"
+  const m = (model+" ").toLowerCase()
+    .replace(/\(/g,' ').replace(/\)/g,' ')
+    .replace(/\+/g,' ')
+    .replace(/[^a-z0-9 ]/g,' ')
+    .replace(/\s+/g,' ').trim();
+  const isApplePhone = (brand||"").toUpperCase()==="APPLE" && !m.includes("iwatch") && !m.includes("airpod");
+  // Build candidate keys, longest first
+  const tries = [];
+  // iPhone normalization: "17promax" -> "iphone 17 pro max"
+  if(isApplePhone){
+    let mn = m.replace(/promax/g,'pro max').replace(/pro\s*max/g,'pro max');
+    if(!mn.startsWith('iphone')) mn = 'iphone '+mn;
+    tries.push(mn);
+    // strip trailing tokens one by one
+    const parts = mn.split(' ');
+    while(parts.length>1){ parts.pop(); tries.push(parts.join(' ')); }
+  } else {
+    tries.push(m);
+    const parts = m.split(' ');
+    while(parts.length>1){ parts.pop(); tries.push(parts.join(' ')); }
+  }
+  // Sort tries by length desc to match most specific first
+  tries.sort((a,b)=>b.length-a.length);
+  for(const key of tries){
+    if(PHONE_IMAGES[key]) return PHONE_IMAGES[key];
+    // Also try without leading "iphone "
+    if(PHONE_IMAGES[key.replace(/^iphone\s+/,'')]) return PHONE_IMAGES[key.replace(/^iphone\s+/,'')];
+  }
+  // Last resort: find any key contained in m
+  for(const key of Object.keys(PHONE_IMAGES).sort((a,b)=>b.length-a.length)){
+    if(m.includes(key)) return PHONE_IMAGES[key];
+  }
+  return null;
+}
+
+const ICONS = {
+  "iPhone":"fa-brands fa-apple",
+  "Apple Watch":"fas fa-stopwatch",
+  "AirPods":"fas fa-headphones",
+  "Samsung":"fas fa-mobile-screen",
+  "Google Pixel":"fas fa-mobile-screen-button",
+  "iPad":"fas fa-tablet-screen-button",
+  "MacBook":"fas fa-laptop"
+};
+
+let PRODUCTS = [];
+let state = {
+  search:"", category:"All", brand:"", colour:"", storage:"",
+  minPrice:null, maxPrice:null, sort:"default",
+  favorites: JSON.parse(localStorage.getItem('favs')||'[]')
+};
+
+function fmtPrice(n){ return "₹" + Number(n).toLocaleString('en-IN'); }
+
+/* ============= GOOGLE SHEETS LOADER ============= */
+async function loadStock(forceRefresh){
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  
+  if(!CONFIG.GOOGLE_SHEET_CSV_URL){
+    // No URL configured — show setup instructions
+    document.getElementById('productsGrid').innerHTML = `
+      <div class="error-box" style="grid-column:1/-1">
+        <i class="fas fa-cog"></i>
+        <h3 style="color:#fff;margin:8px 0">⚙️ One-time setup needed</h3>
+        <p>Open this HTML file in any text editor and paste your Google Sheet CSV URL into the <b>CONFIG.GOOGLE_SHEET_CSV_URL</b> field at the top of the &lt;script&gt; section.</p>
+        <p style="margin-top:10px;color:#fbbf24"><b>How to get the URL:</b> In your Google Sheet → File → Share → Publish to web → Choose "STOCK" sheet, format CSV → Click Publish → Copy the link.</p>
+      </div>`;
+    btn.classList.remove('spinning');
+    return;
+  }
+  
+  try{
+    const url = CONFIG.GOOGLE_SHEET_CSV_URL + (CONFIG.GOOGLE_SHEET_CSV_URL.includes('?')?'&':'?') + 'cachebust=' + Date.now();
+    const resp = await fetch(url);
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    const csv = await resp.text();
+    const parsed = Papa.parse(csv, {header:false, skipEmptyLines:true});
+    PRODUCTS = parseSheet(parsed.data);
+    
+    document.getElementById('totalCount').textContent = PRODUCTS.length;
+    document.getElementById('brandCount').textContent = new Set(PRODUCTS.map(p=>p.brand)).size;
+    document.getElementById('lastUpdate').querySelector('span').textContent = 
+      'Last updated: ' + new Date().toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    
+    buildCategoryTabs();
+    buildFilterOptions();
+    render();
+    if(forceRefresh) showToast("Stock refreshed!","fa-check-circle");
+  } catch(err){
+    console.error(err);
+    document.getElementById('productsGrid').innerHTML = `
+      <div class="error-box" style="grid-column:1/-1">
+        <i class="fas fa-triangle-exclamation"></i>
+        <h3 style="color:#fff;margin:8px 0">Couldn't load stock</h3>
+        <p>${err.message}</p>
+        <p style="margin-top:8px">Check that the Google Sheet is published (File → Share → Publish to web).</p>
+      </div>`;
+  }
+  btn.classList.remove('spinning');
+}
+
+/* ============= SHEET PARSER ============= */
+// Detects section headers (IPHONE, IPAD, APPLE WATCH, AIRPODS, MACBOOK, ANDROID)
+// and column headers automatically. Works with the user's existing sheet structure.
+function parseSheet(rows){
+  const out = [];
+  let pid = 1;
+  let currentCategory = null;
+  let header = null;
+  
+  const SECTION_KEYWORDS = {
+    "IPHONE":"iPhone", "IPAD":"iPad", "APPLE WATCH":"Apple Watch",
+    "IWATCH":"Apple Watch", "AIRPODS":"AirPods", "MACBOOK":"MacBook",
+    "ANDROID":"Android", "SAMSUNG":"Samsung", "GOOGLE":"Google Pixel"
+  };
+  
+  for(const row of rows){
+    if(!row || row.every(c=>!c||String(c).trim()==='')) continue;
+    const joined = row.map(c=>String(c||'').trim().toUpperCase()).join(' | ');
+    
+    // Detect section header (just one cell with keyword)
+    const nonEmpty = row.filter(c=>c && String(c).trim());
+    if(nonEmpty.length<=2){
+      for(const kw in SECTION_KEYWORDS){
+        if(nonEmpty.some(c=>String(c).trim().toUpperCase()===kw)){
+          currentCategory = SECTION_KEYWORDS[kw];
+          header = null;
+          break;
+        }
+      }
+      continue;
+    }
+    
+    // Detect column header
+    const cells = row.map(c=>String(c||'').trim());
+    if(cells.some(c=>c.toUpperCase()==='S NO.' || c.toUpperCase()==='S NO' || c.toUpperCase()==='SNO')){
+      header = cells.map(c=>c.toUpperCase());
+      continue;
+    }
+    
+    if(!header) continue;
+    
+    // Build product
+    const get = (names)=>{
+      for(const n of names){
+        const i = header.indexOf(n);
+        if(i>=0 && cells[i]) return cells[i];
+      }
+      return '';
+    };
+    
+    const sno = get(['S NO.','S NO','SNO']);
+    const brand = get(['BRAND']);
+    const model = get(['MODEL']);
+    if(!sno || !model) continue;
+    
+    let category = currentCategory;
+    if(!category){
+      const bU = brand.toUpperCase();
+      if(bU==='SAMSUNG') category='Samsung';
+      else if(bU==='GOOGLE') category='Google Pixel';
+      else if(bU==='APPLE') category='iPhone';
+      else category='Phone';
+    }
+    // Special case: Samsung/Google rows under "ANDROID" section
+    if(category==='Android'){
+      const bU = brand.toUpperCase();
+      if(bU==='SAMSUNG') category='Samsung';
+      else if(bU==='GOOGLE') category='Google Pixel';
+    }
+    
+    const priceRaw = get(['PRICE','SELL PRICE']);
+    const price = parseInt(String(priceRaw).replace(/[^\d]/g,''))||0;
+    
+    out.push({
+      id: pid++,
+      sno, brand: brand||'-', model,
+      category,
+      colour: get(['COLOUR','COLOR'])||'-',
+      storage: get(['GB','S','STORAGE'])||'-',
+      size: get(['SIZE'])||'',
+      condition: get(['CONDITION','CONDITIONS'])||'-',
+      battery: get(['BATTREY','BATTERY'])||'-',
+      cycle: get(['CYCLE'])||'-',
+      warranty: get(['WARRANTY'])||'-',
+      kit: get(['KIT'])||'',
+      details: get(['DETAILS'])||'',
+      price
+    });
+  }
+  return out;
+}
+
+/* ============= UI BUILDERS ============= */
+function buildCategoryTabs(){
+  const cats = {"All": PRODUCTS.length};
+  PRODUCTS.forEach(p=>cats[p.category]=(cats[p.category]||0)+1);
+  const wrap = document.getElementById('catTabs');
+  const order = ["All","iPhone","Samsung","Google Pixel","Apple Watch","AirPods","iPad","MacBook"];
+  const otherCats = Object.keys(cats).filter(c=>!order.includes(c));
+  const finalOrder = [...order,...otherCats];
+  wrap.innerHTML = finalOrder.filter(c=>cats[c]).map(c=>{
+    const ic = c==="All" ? "fas fa-grip" : (ICONS[c]||"fas fa-mobile");
+    return `<button class="cat-tab ${state.category===c?'active':''}" data-cat="${c}">
+      <i class="${ic}"></i> ${c} <span class="count">${cats[c]}</span></button>`;
+  }).join('');
+  wrap.querySelectorAll('.cat-tab').forEach(b=>{
+    b.addEventListener('click',()=>{state.category=b.dataset.cat; buildCategoryTabs(); render();});
+  });
+}
+
+function buildFilterOptions(){
+  const brands = [...new Set(PRODUCTS.map(p=>p.brand).filter(Boolean))].sort();
+  const cols = [...new Set(PRODUCTS.map(p=>p.colour).filter(c=>c && c!=='-' && c!=='nan'))].sort();
+  const sts = [...new Set(PRODUCTS.map(p=>p.storage).filter(s=>s && s!=='-' && s!=='nan'))].sort();
+  document.getElementById('filterBrand').innerHTML = '<option value="">All Brands</option>' + brands.map(b=>`<option value="${b}">${b}</option>`).join('');
+  document.getElementById('filterColour').innerHTML = '<option value="">All Colors</option>' + cols.map(c=>`<option value="${c}">${c}</option>`).join('');
+  document.getElementById('filterStorage').innerHTML = '<option value="">All Storage</option>' + sts.map(s=>`<option value="${s}">${s}</option>`).join('');
+}
+
+function filterProducts(){
+  let list = PRODUCTS.slice();
+  if(state.category!=="All") list = list.filter(p=>p.category===state.category);
+  if(state.brand) list = list.filter(p=>p.brand===state.brand);
+  if(state.colour) list = list.filter(p=>p.colour===state.colour);
+  if(state.storage) list = list.filter(p=>p.storage===state.storage);
+  if(state.minPrice!==null) list = list.filter(p=>p.price>=state.minPrice);
+  if(state.maxPrice!==null) list = list.filter(p=>p.price<=state.maxPrice);
+  if(state.search){
+    const q = state.search.toLowerCase().trim();
+    const tokens = q.split(/\s+/);
+    list = list.filter(p=>{
+      const hay = `${p.brand} ${p.model} ${p.colour} ${p.storage} ${p.category}`.toLowerCase();
+      return tokens.every(t=>hay.includes(t));
+    });
+  }
+  if(state.sort==="low") list.sort((a,b)=>a.price-b.price);
+  else if(state.sort==="high") list.sort((a,b)=>b.price-a.price);
+  else if(state.sort==="model") list.sort((a,b)=>a.model.localeCompare(b.model));
+  return list;
+}
+
+function isNew(p){
+  return /17PRO|17 PRO|FOLD 7|S25|PIXEL 10|AIRPODS PRO 3|ULTRA 2|IPHONE AIR/i.test(p.model + ' ' + p.brand);
+}
+
+function fmtPct(v){
+  if(v===undefined||v===null||v==='') return '-';
+  const n = parseFloat(v);
+  if(!isNaN(n) && n<=1.01) return Math.round(n*100)+'%';
+  return v;
+}
+
+function productCard(p){
+  const fav = state.favorites.includes(p.id);
+  const ic = ICONS[p.category] || "fas fa-mobile";
+  const newBadge = isNew(p) ? `<div class="card-badge new"><i class="fas fa-bolt"></i> NEW</div>` : `<div class="card-badge">${p.category}</div>`;
+  const img = findImage(p.model, p.brand);
+  const imgHtml = img 
+    ? `<img src="${img}" alt="${p.model}" loading="lazy" onerror="this.outerHTML='<i class=\\'${ic} fallback\\'></i>'">`
+    : `<i class="${ic} fallback"></i>`;
+  return `
+  <div class="card" onclick="openProduct(${p.id})">
+    <div class="card-img">
+      ${newBadge}
+      <button class="card-fav ${fav?'active':''}" onclick="event.stopPropagation();toggleFav(${p.id})" title="Save"><i class="fa${fav?'s':'r'} fa-heart"></i></button>
+      ${imgHtml}
+    </div>
+    <div class="card-body">
+      <div class="card-brand">${p.brand}</div>
+      <div class="card-title">${p.model}</div>
+      <div class="card-specs">
+        <span class="spec-chip"><i class="fas fa-palette"></i>${p.colour}</span>
+        ${p.storage && p.storage!=='-'?`<span class="spec-chip"><i class="fas fa-database"></i>${p.storage}</span>`:''}
+        ${p.warranty && p.warranty!=='-' ? `<span class="spec-chip"><i class="fas fa-shield-halved"></i>${p.warranty}</span>`:''}
+      </div>
+      <div class="card-meta">
+        ${p.battery && p.battery!=='-'?`<div class="meta-item">Battery<b>${fmtPct(p.battery)}</b></div>`:''}
+        ${p.cycle && p.cycle!=='-'?`<div class="meta-item">Cycle<b>${p.cycle}</b></div>`:''}
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="price">
+        <div class="price-label">Price</div>
+        <div class="price-amount">${fmtPrice(p.price)}</div>
+      </div>
+      <a class="btn-buy" onclick="event.stopPropagation();buyOnWhatsApp(${p.id})">
+        <i class="fab fa-whatsapp"></i> Buy
+      </a>
+    </div>
+  </div>`;
+}
+
+function render(){
+  const list = filterProducts();
+  document.getElementById('showingCount').textContent = list.length;
+  const grid = document.getElementById('productsGrid');
+  if(list.length===0){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-box-open"></i><h3>No phones found</h3><p>Try changing filters or search keywords</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(productCard).join('');
+  document.getElementById('favCount').textContent = state.favorites.length;
+}
+
+function buyOnWhatsApp(id){
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+  const msg = `Hi ${CONFIG.SHOP_NAME}, I'm interested in:\n\n📱 *${p.brand} ${p.model}*\n🎨 Color: ${p.colour}\n💾 Storage: ${p.storage}\n🛡️ Warranty: ${p.warranty}\n💰 Price: ${fmtPrice(p.price)}\n📦 Stock ID: ${p.sno}\n\nIs this still available?`;
+  window.open(`https://wa.me/${CONFIG.SHOP_PHONE}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function toggleFav(id){
+  const i = state.favorites.indexOf(id);
+  if(i>-1){ state.favorites.splice(i,1); showToast("Removed from wishlist","fa-heart-circle-minus"); }
+  else { state.favorites.push(id); showToast("Added to wishlist!","fa-heart-circle-plus"); }
+  localStorage.setItem('favs',JSON.stringify(state.favorites));
+  render();
+}
+
+function openProduct(id){
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+  const ic = ICONS[p.category] || "fas fa-mobile";
+  const fav = state.favorites.includes(p.id);
+  const img = findImage(p.model, p.brand);
+  const imgHtml = img
+    ? `<img src="${img}" alt="${p.model}" onerror="this.outerHTML='<i class=\\'${ic} fallback\\'></i>'">`
+    : `<i class="${ic} fallback"></i>`;
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-header">
+      <h3><i class="${ic}"></i> Product Details</h3>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-img">${imgHtml}</div>
+      <div class="modal-brand">${p.brand} • ${p.category}</div>
+      <div class="modal-title">${p.model}</div>
+      <div class="modal-price">${fmtPrice(p.price)}</div>
+      <div class="modal-specs">
+        <div class="modal-spec"><div class="modal-spec-label">Color</div><div class="modal-spec-value">${p.colour}</div></div>
+        <div class="modal-spec"><div class="modal-spec-label">Storage</div><div class="modal-spec-value">${p.storage}</div></div>
+        <div class="modal-spec"><div class="modal-spec-label">Warranty</div><div class="modal-spec-value">${p.warranty||'-'}</div></div>
+        <div class="modal-spec"><div class="modal-spec-label">Condition</div><div class="modal-spec-value">${fmtPct(p.condition)}</div></div>
+        ${p.battery && p.battery!=='-'?`<div class="modal-spec"><div class="modal-spec-label">Battery Health</div><div class="modal-spec-value">${fmtPct(p.battery)}</div></div>`:''}
+        ${p.cycle && p.cycle!=='-'?`<div class="modal-spec"><div class="modal-spec-label">Battery Cycle</div><div class="modal-spec-value">${p.cycle}</div></div>`:''}
+        ${p.size?`<div class="modal-spec"><div class="modal-spec-label">Size</div><div class="modal-spec-value">${p.size}</div></div>`:''}
+        <div class="modal-spec"><div class="modal-spec-label">Stock ID</div><div class="modal-spec-value">${p.sno}</div></div>
+        ${p.details?`<div class="modal-spec"><div class="modal-spec-label">Note</div><div class="modal-spec-value">${p.details}</div></div>`:''}
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="toggleFav(${p.id});closeModal()">
+          <i class="fa${fav?'s':'r'} fa-heart"></i> ${fav?'Saved':'Save'}
+        </button>
+        <a class="btn-primary" onclick="buyOnWhatsApp(${p.id})">
+          <i class="fab fa-whatsapp"></i> Buy on WhatsApp
+        </a>
+      </div>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function openCart(){
+  if(state.favorites.length===0){
+    showToast("Wishlist is empty. Tap ♥ on any phone to save it","fa-heart");
+    return;
+  }
+  const items = state.favorites.map(id=>PRODUCTS.find(p=>p.id===id)).filter(Boolean);
+  let msg = `Hi ${CONFIG.SHOP_NAME}, I'm interested in these phones from your stock:\n\n`;
+  items.forEach((p,i)=>{
+    msg += `${i+1}. *${p.brand} ${p.model}* (${p.colour}, ${p.storage}) — ${fmtPrice(p.price)}\n`;
+  });
+  msg += `\nTotal items: ${items.length}\nPlease confirm availability.`;
+  window.open(`https://wa.me/${CONFIG.SHOP_PHONE}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function showToast(message, iconClass){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = message;
+  t.querySelector('i').className = `fas ${iconClass||'fa-check-circle'}`;
+  t.classList.add('show');
+  clearTimeout(window._toast);
+  window._toast = setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+function toggleFilters(){ document.getElementById('filtersPanel').classList.toggle('open'); }
+function clearSearch(){ document.getElementById('searchInput').value=''; state.search=''; document.getElementById('clearBtn').classList.remove('show'); render(); }
+function resetFilters(){
+  state.brand=""; state.colour=""; state.storage=""; state.minPrice=null; state.maxPrice=null;
+  document.getElementById('filterBrand').value='';
+  document.getElementById('filterColour').value='';
+  document.getElementById('filterStorage').value='';
+  document.getElementById('minPrice').value='';
+  document.getElementById('maxPrice').value='';
+  render();
+}
+
+/* ============= INITIAL SETUP ============= */
+function applyConfig(){
+  document.getElementById('brandName').textContent = CONFIG.SHOP_NAME;
+  document.getElementById('footerBrand').textContent = CONFIG.SHOP_NAME;
+  document.getElementById('copyrightBrand').textContent = CONFIG.SHOP_NAME;
+  document.getElementById('footerTagline').textContent = CONFIG.SHOP_TAGLINE;
+  document.getElementById('footerLocation').textContent = CONFIG.SHOP_LOCATION;
+  document.title = CONFIG.SHOP_NAME + ' - Live Stock Catalog';
+  const waUrl = `https://wa.me/${CONFIG.SHOP_PHONE}?text=${encodeURIComponent('Hi '+CONFIG.SHOP_NAME+', I want to know about your phones')}`;
+  document.getElementById('headerWa').href = waUrl;
+  document.getElementById('floatWa').href = waUrl;
+  document.getElementById('footerWa').href = `https://wa.me/${CONFIG.SHOP_PHONE}`;
+  document.getElementById('footerCall').href = `tel:+${CONFIG.SHOP_PHONE}`;
+}
+
+document.getElementById('searchInput').addEventListener('input',e=>{
+  state.search = e.target.value;
+  document.getElementById('clearBtn').classList.toggle('show', !!e.target.value);
+  render();
+});
+document.getElementById('filterBrand').addEventListener('change',e=>{state.brand=e.target.value;render()});
+document.getElementById('filterColour').addEventListener('change',e=>{state.colour=e.target.value;render()});
+document.getElementById('filterStorage').addEventListener('change',e=>{state.storage=e.target.value;render()});
+document.getElementById('minPrice').addEventListener('input',e=>{state.minPrice=e.target.value?Number(e.target.value):null;render()});
+document.getElementById('maxPrice').addEventListener('input',e=>{state.maxPrice=e.target.value?Number(e.target.value):null;render()});
+document.getElementById('sortSelect').addEventListener('change',e=>{state.sort=e.target.value;render()});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+applyConfig();
+loadStock(false);
+
+// Auto-refresh
+if(CONFIG.AUTO_REFRESH_MINUTES > 0){
+  setInterval(()=>loadStock(false), CONFIG.AUTO_REFRESH_MINUTES*60*1000);
+}
+</script>
+</body>
+</html>

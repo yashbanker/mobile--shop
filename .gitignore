@@ -1,0 +1,32 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local environment
+.env
+.env.local
+
+# Build artifacts
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Personal stock backups (don't commit your real stock data)
+my_stock_backup.csv
+private_stock.xlsx
+
+# Temporary files
+*.tmp
+*.bak
